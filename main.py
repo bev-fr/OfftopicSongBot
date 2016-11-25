@@ -86,8 +86,9 @@ def forward(bot, update):
     uid = str(update.message.from_user.id)
     first = update.message.from_user.first_name
     last =  update.message.from_user.last_name
+    cid = str(update.message.chat_id)
     msg = update.message.text
-    lmsg = (first, last, uid, msg)
+    lmsg = (first, last, uid, cid, msg)
     hy = " - "
     logger.info(hy.join( lmsg))
     
