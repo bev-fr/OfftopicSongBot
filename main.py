@@ -8,6 +8,7 @@ from configparser import ConfigParser
 import logging
 import re
 import yaml
+import youtube_dl
 
 
 #Bot Configuration
@@ -58,8 +59,7 @@ def error(bot, update, error):
     logger.warn('Update "%s" caused error "%s"' % (update, error))
 
 def urlcheck(url):
-    #print('checking url')
-    import youtube_dl
+    logger.debug('Checking video')
     if reg.match(url) is not  None: 
         ydl = youtube_dl.YoutubeDL({'outtmpl': '%(id)s%(ext)s'})
         with ydl:
@@ -67,11 +67,8 @@ def urlcheck(url):
         if 'entries' in result:
             return None
         else:
-            #print('it is a video')
             return True
     else:
-        #print('regex check failed')
-        #print(reg.match(url))
         return None
            
 def log_message(update):
