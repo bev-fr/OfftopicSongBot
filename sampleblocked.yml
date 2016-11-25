@@ -1,3 +1,8 @@
+#THIS IS A SAMPLE CONFIG FILE. 
+#To run the bot you need to make a copy of this file named "blocked.yml" and replace the placeholder values
+
+
+
 blockedusers:
         - id
         - id
