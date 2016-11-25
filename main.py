@@ -1,20 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# Simple Bot to reply to Telegram messages
 # This program is dedicated to the public domain under the CC0 license.
-"""
-This Bot uses the Updater class to handle the bot.
-
-First, a few handler functions are defined. Then, those functions are passed to
-the Dispatcher and registered at their respective places.
-Then, the bot is started and runs until we press Ctrl-C on the command line.
-
-Usage:
-Basic Echobot example, repeats messages.
-Press Ctrl-C on the command line or send a signal to the process to stop the
-bot.
-"""
 
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 from configparser import ConfigParser
@@ -24,8 +11,8 @@ import yaml
 
 
 #Bot Configuration
-with open("config.yml", 'r') as ymlfile:
-    cfg = yaml.load(ymlfile)
+with open("config.yml", 'r') as configfile:
+    cfg = yaml.load(configfile)
 
 for section in cfg:
     TOKEN = str(cfg['apitoken'])
@@ -33,18 +20,23 @@ for section in cfg:
     log = str(cfg['log'])
 
 
+#Blocked Users
+with open("blocked.yml", 'r') as blockedfile:
+    busers = yaml.load(blockedfile)
+
+for section in cfg:
+    blocked = busers['blockedusers']
+
+
 #Compile regex for youtube check
 reg = re.compile("^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?$")
 
 
 # Enable logging
-logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+logging.basicConfig(format= u'%(asctime)-s %(levelname)s [%(name)s]: %(message)s',
                     level=logging.INFO)
-
 logger = logging.getLogger(__name__)
 hdlr = logging.FileHandler(log)
-formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
-hdlr.setFormatter(formatter)
 logger.addHandler(hdlr) 
 
 
@@ -81,26 +73,34 @@ def urlcheck(url):
         #print('regex check failed')
         #print(reg.match(url))
         return None
-            
-def forward(bot, update):
+           
+def log_message(update):
     uid = str(update.message.from_user.id)
-    first = update.message.from_user.first_name
-    last =  update.message.from_user.last_name
+    first = (update.message.from_user.first_name)
+    last =  (update.message.from_user.last_name)
     cid = str(update.message.chat_id)
     msg = update.message.text
     lmsg = (first, last, uid, cid, msg)
     hy = " - "
     logger.info(hy.join( lmsg))
-    
+
+
+def forward(bot, update):
+    log_message(update)
     if update.message.chat_id < 0: return None
+    elif update.message.from_user.id in blocked: 
+        logger.info('Blocked from posting')
+        return None
     else:
         if urlcheck(update.message.text) is True:
+            logger.info('Submitted')
             update.message.reply_text('Submited to @WWotradio')
             seq = (update.message.text, "\nSubmitted by:", first, last)
             s = " "
             for val in subgroups:
                 bot.sendMessage(val, s.join( seq ))
         else:
+            logger.info('Invalid link')
             update.message.reply_text('Please send a valid youtube link')
 
 def main():
