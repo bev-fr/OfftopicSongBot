@@ -5,10 +5,9 @@
 
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 from configparser import ConfigParser
+from urlcheck import urlcheck
 import logging
-import re
 import yaml
-import youtube_dl
 
 
 #Bot Configuration
@@ -27,11 +26,6 @@ with open("blocked.yml", 'r') as blockedfile:
 
 for section in cfg:
     blocked = busers['blockedusers']
-
-
-#Compile regex for youtube check
-reg = re.compile("^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?$")
-
 
 # Enable logging
 logging.basicConfig(format= u'%(asctime)-s %(levelname)s [%(name)s]: %(message)s',
@@ -57,23 +51,6 @@ def echo(bot, update):
 
 def error(bot, update, error):
     logger.warn('Update "%s" caused error "%s"' % (update, error))
-
-def urlcheck(url):
-    logger.debug('Checking video')
-    if reg.match(url) is not None: 
-        ydl = youtube_dl.YoutubeDL({'outtmpl': '%(id)s%(ext)s'})
-        with ydl:
-            try:
-                result = ydl.extract_info(url, download=False) 
-            except youtube_dl.utils.DownloadError:
-                return False
-
-        if 'entries' in result:
-            return False
-        else:
-            return True
-    else:
-        return False
            
 def log_message(update):
     uid = str(update.message.from_user.id)

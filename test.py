@@ -1,4 +1,4 @@
-from main import urlcheck
+from urlcheck import urlcheck
 import unittest
 import youtube_dl
 
