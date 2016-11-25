@@ -1,0 +1,7 @@
+apitoken: api-token-here
+
+log: 'path/to/log/file'
+
+subgroups:
+        - id1
+        - id2
