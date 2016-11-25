@@ -1,0 +1,6 @@
+apitoken:
+        - API_TOKEN_HERE
+
+subgroups:
+        - id1
+        - id2
