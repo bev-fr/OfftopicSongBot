@@ -10,6 +10,7 @@ Dependencies
 
 * PyYAML
 * youtube-dl
+* python-telegram-bot
 
 Clone or download this repository and follow the instruction in sampleconfig.yml and sampleblocked.yml to replace the placeholder values.
 
