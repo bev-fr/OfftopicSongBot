@@ -95,6 +95,8 @@ def forward(bot, update):
         if urlcheck(update.message.text) is True:
             logger.info('Submitted')
             update.message.reply_text('Submited to @WWotradio')
+            first = (update.message.from_user.first_name)
+            last =  (update.message.from_user.last_name)
             seq = (update.message.text, "\nSubmitted by:", first, last)
             s = " "
             for val in subgroups:
