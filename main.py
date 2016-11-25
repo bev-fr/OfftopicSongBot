@@ -20,14 +20,17 @@ from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 from configparser import ConfigParser
 import logging
 import re
+import yaml
 
 
 #Bot Configuration
-config = ConfigParser()
-config.read_file(open('config.ini'))
+with open("config.yml", 'r') as ymlfile:
+    cfg = yaml.load(ymlfile)
 
-subgroups = config.get('DEFAULT' , 'subgroups').split
-print(subgroups)
+for section in cfg:
+    print(cfg['subgroups'])
+    TOKEN = str(cfg['apitoken'])
+    subgroups= cfg['subgroups']
 
 #Compile regex for youtube check
 reg = re.compile("^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?$")
@@ -72,7 +75,7 @@ def urlcheck(url):
             return True
     else:
         print('regex check failed')
-        print(x.match(url))
+        print(reg.match(url))
         return None
             
 def forward(bot, update):
@@ -92,8 +95,8 @@ def forward(bot, update):
 
 def main():
     # Create the EventHandler and pass it your bot's token.
-    updater = Updater(token=config['DEFAULT']['TOKEN'])
-
+    updater = Updater(TOKEN)
+    
     # Get the dispatcher to register handlers
     dp = updater.dispatcher
 

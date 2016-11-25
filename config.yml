@@ -1,5 +1,4 @@
-apitoken:
-        - API_TOKEN_HERE
+apitoken: your-api-token-here
 
 subgroups:
         - id1
