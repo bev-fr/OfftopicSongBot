@@ -28,9 +28,10 @@ with open("config.yml", 'r') as ymlfile:
     cfg = yaml.load(ymlfile)
 
 for section in cfg:
-    print(cfg['subgroups'])
     TOKEN = str(cfg['apitoken'])
-    subgroups= cfg['subgroups']
+    subgroups = cfg['subgroups']
+    log = str(cfg['log'])
+
 
 #Compile regex for youtube check
 reg = re.compile("^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?$")
@@ -41,6 +42,10 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
                     level=logging.INFO)
 
 logger = logging.getLogger(__name__)
+hdlr = logging.FileHandler(log)
+formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
+hdlr.setFormatter(formatter)
+logger.addHandler(hdlr) 
 
 
 # Define a few command handlers. These usually take the two arguments bot and
@@ -61,7 +66,7 @@ def error(bot, update, error):
     logger.warn('Update "%s" caused error "%s"' % (update, error))
 
 def urlcheck(url):
-    print('checking url')
+    #print('checking url')
     import youtube_dl
     if reg.match(url) is not  None: 
         ydl = youtube_dl.YoutubeDL({'outtmpl': '%(id)s%(ext)s'})
@@ -70,24 +75,28 @@ def urlcheck(url):
         if 'entries' in result:
             return None
         else:
-            # Just a vide
-            print('it is a video')
+            #print('it is a video')
             return True
     else:
-        print('regex check failed')
-        print(reg.match(url))
+        #print('regex check failed')
+        #print(reg.match(url))
         return None
             
 def forward(bot, update):
-    print(update.message.from_user.id)
+    uid = str(update.message.from_user.id)
+    first = update.message.from_user.first_name
+    last =  update.message.from_user.last_name
+    msg = update.message.text
+    lmsg = (first, last, uid, msg)
+    hy = " - "
+    logger.info(hy.join( lmsg))
+    
     if update.message.chat_id < 0: return None
     else:
         if urlcheck(update.message.text) is True:
             update.message.reply_text('Submited to @WWotradio')
-            s = " ";
-            first = update.message.from_user.first_name
-            last =  update.message.from_user.last_name
-            seq = (update.message.text, "\nSubmitted by:", first, last); # This is sequence of strings.
+            seq = (update.message.text, "\nSubmitted by:", first, last)
+            s = " "
             for val in subgroups:
                 bot.sendMessage(val, s.join( seq ))
         else:
