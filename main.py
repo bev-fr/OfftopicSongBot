@@ -60,16 +60,20 @@ def error(bot, update, error):
 
 def urlcheck(url):
     logger.debug('Checking video')
-    if reg.match(url) is not  None: 
+    if reg.match(url) is not None: 
         ydl = youtube_dl.YoutubeDL({'outtmpl': '%(id)s%(ext)s'})
         with ydl:
-            result = ydl.extract_info(url, download=False) # We just want to extract the info
+            try:
+                result = ydl.extract_info(url, download=False) 
+            except youtube_dl.utils.DownloadError:
+                return False
+
         if 'entries' in result:
-            return None
+            return False
         else:
             return True
     else:
-        return None
+        return False
            
 def log_message(update):
     uid = str(update.message.from_user.id)
