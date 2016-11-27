@@ -32,6 +32,8 @@ logging.basicConfig(format= u'%(asctime)-s %(levelname)s [%(name)s]: %(message)s
                     level=logging.INFO)
 logger = logging.getLogger(__name__)
 hdlr = logging.FileHandler(log)
+formatter = logging.Formatter(u'%(asctime)-s %(levelname)s [%(name)s]: %(message)s')
+hdlr.setFormatter(formatter)
 logger.addHandler(hdlr) 
 
 
