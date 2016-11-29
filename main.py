@@ -78,9 +78,9 @@ def forward(bot, update):
             first = (update.message.from_user.first_name)
             last =  (update.message.from_user.last_name)
             seq = (update.message.text, "\nSubmitted by:", first, last)
-            s = " "
+            s = " ".join(seq)
             for val in subgroups:
-                bot.sendMessage(val, s.join( seq ))
+                bot.sendMessage(val, s)
 		elif update.message.video:
 			logger.info('Submitted video')
 			update.message.reply_text('Submitted to @WWotradio')
