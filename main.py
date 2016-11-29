@@ -73,7 +73,7 @@ def forward(bot, update):
         return None
     else:
         if urlcheck(update.message.text) is True:
-            logger.info('Submitted')
+            logger.info('Submitted link')
             update.message.reply_text('Submited to @WWotradio')
             first = (update.message.from_user.first_name)
             last =  (update.message.from_user.last_name)
@@ -81,6 +81,28 @@ def forward(bot, update):
             s = " "
             for val in subgroups:
                 bot.sendMessage(val, s.join( seq ))
+		elif update.message.video:
+			logger.info('Submitted video')
+			update.message.reply_text('Submitted to @WWotradio')
+			first = (update.message.from_user.first_name)
+			last = (update.message.from_user.last_name)
+			seq = ("Submitted by:", first, last)
+			if update.message.caption:
+				seq = (update.message.caption, "\nSubmitted by:", first, last)
+			s = " ".join(seq)
+			for val in subgroups:
+				bot.sendVideo(chat_id = val, video = update.message.video.file_id, caption = s)
+		elif update.message.audio:
+			logger.info('Submitted audio')
+			update.message.reply_text('Submitted to @WWotradio')
+			first = (update.message.from_user.first_name)
+			last = (update.message.from_user.last_name)
+			seq = ("Submitted by:", first, last)
+			if update.message.caption:
+				seq = (update.message.caption, "\nSubmitted by:", first, last)
+			s = " ".join(seq)
+			for val in subgroups:
+				bot.sendAudio(chat_id = val, audio = update.message.audio.file_id, caption = s)
         else:
             logger.info('Invalid link')
             update.message.reply_text('Please send a valid youtube link')
