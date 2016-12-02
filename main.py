@@ -5,10 +5,15 @@
 
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 from configparser import ConfigParser
-from urlcheck import urlcheck
 import logging
 import yaml
+import youtube_dl
+import re
 
+#Compile regex for youtube check
+reg = re.compile("^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?$")
+
+           
 
 #Bot Configuration
 with open("config.yml", 'r') as configfile:
@@ -60,6 +65,21 @@ def log_message(update):
     hy = " - "
     logger.info(hy.join( lmsg))
 
+def urlcheck(url):
+    if reg.match(url) is not None: 
+        ydl = youtube_dl.YoutubeDL({'outtmpl': '%(id)s%(ext)s'})
+        with ydl:
+            try:
+                result = ydl.extract_info(url, download=False) 
+            except youtube_dl.utils.DownloadError:
+                return False
+
+        if 'entries' in result:
+            return False
+        else:
+            return True
+    else:
+        return False
 
 def forward(bot, update):
     log_message(update)
