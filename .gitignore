@@ -1,3 +1,4 @@
 config.yml
 blocked.yml
 __pycache__/
+log
