@@ -84,9 +84,10 @@ def urlcheck(url):
 def forward(bot, update):
     log_message(update)
     if update.message.chat_id < 0: return None
-    elif update.message.from_user.id in blocked: 
-        logger.info('Blocked from posting')
-        return None
+    elif blocked is not None:
+        if update.message.from_user.id in blocked: 
+            logger.info('Blocked from posting')
+            return None
     else:
         if urlcheck(update.message.text) is True:
             logger.info('Submitted link')
