@@ -136,7 +136,7 @@ def main():
     dp.add_handler(CommandHandler("help", help))
 
     # on noncommand i.e message - echo the message on Telegram
-    dp.add_handler(MessageHandler(Filters.text | Filters.audio | Filters.video, forward))
+    dp.add_handler(MessageHandler(Filters.text, forward))# | Filters.audio | Filters.video, forward))
 
     # log all errors
     dp.add_error_handler(error)
