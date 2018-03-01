@@ -34,7 +34,7 @@ for section in cfg:
 
 # Enable logging
 logging.basicConfig(format= u'%(asctime)-s %(levelname)s [%(name)s]: %(message)s',
-                    level=logging.INFO)
+                    level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 hdlr = logging.FileHandler(log)
 formatter = logging.Formatter(u'%(asctime)-s %(levelname)s [%(name)s]: %(message)s')
@@ -82,11 +82,13 @@ def urlcheck(url):
         return False
 
 def forward(bot, update):
-    if update.message.chat_id < 0: return None
-    elif blocked is not None:
-        if update.message.from_user.id in blocked: 
-            logger.info('Blocked from posting')
-            return None
+    logger.info('Received Message')
+    if update.message.chat_id < 0:
+        logger.info('Received in Group')
+        return None
+    elif update.message.from_user.id in blocked: 
+        logger.info('Blocked from posting')
+        return None
     else:
         log_message(update)
         if urlcheck(update.message.text) is True:
